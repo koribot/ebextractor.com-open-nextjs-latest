@@ -1,0 +1,267 @@
+// import { create } from "zustand";
+// import { createJSONStorage, persist } from "zustand/middleware";
+// import axios from "axios";
+// import { parseAmazonSearchResult } from "@/app/utils/parseAmazonSearchResult";
+// import { encodeTextToURI } from "@/app/utils/encodeTextToURI";
+// import { ChangeEvent } from "react";
+
+// interface Item {
+//   legacyItemId: string;
+//   title: string;
+//   price: {
+//     value: string;
+//     currency: string;
+//   };
+//   thumbnailImages: Array<{ imageUrl: string }>;
+//   condition: string;
+// }
+
+// interface MkState {
+//   ebay: { checked: boolean; defaultVal: string };
+//   amazon: { checked: boolean; defaultVal: string };
+// }
+
+// interface AmazonResult {
+//   img: string;
+//   title: string;
+//   asin: string;
+//   href: string;
+//   price: string;
+// }
+
+// interface SearchStore {
+//   searchTerm: string;
+//   searchUrlParam: string;
+//   ebayResults: Item[];
+//   amazonResults: AmazonResult[];
+//   mkState: MkState;
+//   isEbayLoading: boolean;
+//   isAmazonLoading: boolean;
+//   isEbayLoadingMore: boolean;
+//   isEbayCollapsed: boolean;
+//   isAmazonCollapsed: boolean;
+//   isEbayResHasNextPage: boolean;
+//   amazonCurrentPage: number;
+//   defaultEbaySite: string;
+//   defaultAmazonSite: string;
+//   setSearchTerm: (term: string) => void;
+//   setDefaultEbaySite: (site: ChangeEvent<HTMLSelectElement> | string) => void;
+//   setDefaultAmazonSite: (site: ChangeEvent<HTMLSelectElement> | string) => void;
+//   setSearchUrlParam: (param: string) => void;
+//   setEbayResults: (results: Item[]) => void;
+//   setAmazonResults: (results: AmazonResult[]) => void;
+//   setMkState: (state: Partial<MkState>) => void;
+//   setIsEbayLoading: (loading: boolean) => void;
+//   setIsAmazonLoading: (loading: boolean) => void;
+//   setIsEbayLoadingMore: (loading: boolean) => void;
+//   setIsEbayCollapsed: (collapsed: boolean) => void;
+//   setIsAmazonCollapsed: (collapsed: boolean) => void;
+//   setIsEbayResHasNextPage: (hasNextPage: boolean) => void;
+//   setAmazonCurrentPage: (page: number) => void;
+//   handleSearch: (e?: React.FormEvent) => Promise<void>;
+//   handleEbayLoadMore: () => Promise<void>;
+//   saveToLocalStorage: (
+//     key: string,
+//     checked: boolean,
+//     defaultVal: string
+//   ) => void;
+//   initializeFromLocalStorage: () => void;
+// }
+
+// export const useSearchStore = create<SearchStore>()(
+//   persist(
+//     (set, get) => ({
+//       searchTerm: "",
+//       defaultEbaySite: "",
+//       defaultAmazonSite: "",
+//       searchUrlParam: "",
+//       ebayResults: [],
+//       amazonResults: [],
+//       mkState: {
+//         ebay: { checked: true, defaultVal: "EBAY_US" },
+//         amazon: { checked: true, defaultVal: "AMAZON_US" },
+//       },
+//       isEbayLoading: false,
+//       isAmazonLoading: false,
+//       isEbayLoadingMore: false,
+//       isEbayCollapsed: false,
+//       isAmazonCollapsed: false,
+//       isEbayResHasNextPage: true,
+//       amazonCurrentPage: 1,
+//       setDefaultEbaySite: (event: ChangeEvent<HTMLSelectElement> | string) => {
+//         const newSite = typeof event !== "string" ? event.target.value : event;
+//         set({ defaultEbaySite: newSite });
+//         set((state) => ({
+//           mkState: {
+//             ...state.mkState,
+//             ebay: { ...state.mkState.ebay, defaultVal: newSite },
+//           },
+//         }));
+//       },
+//       setDefaultAmazonSite: (event: ChangeEvent<HTMLSelectElement> | string) => {
+//         const newSite = typeof event !== "string" ? event.target.value : event;
+//         set({ defaultAmazonSite: newSite });
+//         set((state) => ({
+//           mkState: {
+//             ...state.mkState,
+//             amazon: { ...state.mkState.amazon, defaultVal: newSite },
+//           },
+//         }));
+//       },
+//       setSearchTerm: (term: string) => set({ searchTerm: term }),
+//       setSearchUrlParam: (param: string) => set({ searchUrlParam: param }),
+//       setEbayResults: (results: Item[]) => set({ ebayResults: results }),
+//       setAmazonResults: (results: AmazonResult[]) =>
+//         set({ amazonResults: results }),
+//       setMkState: (state: Partial<MkState>) =>
+//         set((prevState) => ({
+//           mkState: { ...prevState.mkState, ...state },
+//         })),
+//       setIsEbayLoading: (loading: boolean) => set({ isEbayLoading: loading }),
+//       setIsAmazonLoading: (loading: boolean) =>
+//         set({ isAmazonLoading: loading }),
+//       setIsEbayLoadingMore: (loading: boolean) =>
+//         set({ isEbayLoadingMore: loading }),
+//       setIsEbayCollapsed: (collapsed: boolean) =>
+//         set({ isEbayCollapsed: collapsed }),
+//       setIsAmazonCollapsed: (collapsed: boolean) =>
+//         set({ isAmazonCollapsed: collapsed }),
+//       setIsEbayResHasNextPage: (hasNextPage: boolean) =>
+//         set({ isEbayResHasNextPage: hasNextPage }),
+//       setAmazonCurrentPage: (page: number) => set({ amazonCurrentPage: page }),
+//       handleSearch: async (e?: React.FormEvent) => {
+//         const {
+//           setAmazonResults,
+//           setEbayResults,
+//           setAmazonCurrentPage,
+//           setIsEbayLoading,
+//           setIsAmazonLoading,
+//           setIsEbayResHasNextPage,
+//           setDefaultEbaySite,
+//           defaultEbaySite,
+//           defaultAmazonSite,
+//           searchTerm,
+//           mkState,
+//         } = get();
+//         setAmazonResults([]);
+//         setEbayResults([]);
+//         setAmazonCurrentPage(1);
+
+//         let ebayPromise: Promise<any> | undefined;
+//         let amazonPromise: Promise<any> | undefined;
+//         if (e) {
+//           e.preventDefault();
+//           const encodedSearchTerm = encodeTextToURI(searchTerm);
+//           if (mkState.ebay.checked) {
+//             setIsEbayLoading(true);
+//             ebayPromise = axios.get(`/api/ebay-search?q=${encodedSearchTerm}&site=${defaultEbaySite}`);
+//           }
+//           if (mkState.amazon.checked) {
+//             setIsAmazonLoading(true);
+//             amazonPromise = axios.get(
+//               `/api/amazon-search?q=${encodedSearchTerm}&siteamz=${defaultAmazonSite}`
+//             );
+//           }
+//         } else {
+//           const url = new URL(window.location.href);
+//           const query = url.searchParams.get("q") || "";
+//           const ebaysite = url.searchParams.get("site") || defaultEbaySite;
+//           const amzsite = url.searchParams.get("siteamz") || defaultAmazonSite;
+//           setDefaultEbaySite(ebaysite);
+//           if (mkState.ebay.checked) {
+//             setIsEbayLoading(true);
+//             ebayPromise = axios.get(`/api/ebay-search?q=${query}&site=${ebaysite}`);
+//           }
+//           if (mkState.amazon.checked) {
+//             setIsAmazonLoading(true);
+//             amazonPromise = axios.get(`/api/amazon-search?q=${query}&siteamz=${amzsite}`);
+//           }
+//         }
+
+//         if (ebayPromise || amazonPromise) {
+//           const promises = [];
+//           ebayPromise && promises.push(ebayPromise);
+//           amazonPromise && promises.push(amazonPromise);
+//           const [ebayRes, amazonRes] = await Promise.all(promises);
+//           if (mkState.ebay.checked && ebayPromise) {
+//             setIsEbayResHasNextPage(ebayRes.data?.next ? true : false);
+//             setEbayResults(ebayRes.data?.itemSummaries);
+//             setIsEbayLoading(false);
+//           }
+//           if (mkState.amazon.checked && amazonPromise) {
+//             let results = parseAmazonSearchResult(amazonRes?.data);
+//             let counter = 0;
+//             while (results.length === 0 && counter < 10) {
+//               const encodedSearchTerm = encodeURIComponent(searchTerm);
+//               const res = await axios.get(
+//                 `/api/amazon-search?q=${encodedSearchTerm}&siteamz=${defaultAmazonSite}`
+//               );
+//               results = parseAmazonSearchResult(res.data);
+//               counter++;
+//             }
+//             setAmazonResults(results);
+//             setIsAmazonLoading(false);
+//           }
+//         }
+//       },
+//       handleEbayLoadMore: async () => {
+//         const {
+//           setIsEbayLoadingMore,
+//           setEbayResults,
+//           setIsEbayResHasNextPage,
+//           searchTerm,
+//           ebayResults,
+//           defaultEbaySite,
+//         } = get();
+//         setIsEbayLoadingMore(true);
+//         const res = await axios.get(
+//           `/api/ebay-search?q=${searchTerm}&limit=${20}&offset=${
+//             ebayResults.length
+//           }&site=${defaultEbaySite}`
+//         );
+//         setEbayResults([...ebayResults, ...res.data.itemSummaries]);
+//         setIsEbayLoadingMore(false);
+//         setIsEbayResHasNextPage(res.data.next ? true : false);
+//       },
+//       saveToLocalStorage: (
+//         key: string,
+//         checked: boolean,
+//         defaultVal: string
+//       ) => {
+//         set((state) => ({
+//           mkState: {
+//             ...state.mkState,
+//             [key]: { checked, defaultVal },
+//           },
+//         }));
+//       },
+//       initializeFromLocalStorage: () => {
+//         const obj = getLocalStorageItem("search-store");
+//         if (obj) {
+//           set((state) => ({
+//             mkState: obj.state.mkState,
+//             defaultEbaySite: obj.state.mkState.ebay.defaultVal,
+//             defaultAmazonSite: obj.state.mkState.amazon.defaultVal,
+//           }));
+//         }
+//       },
+//     }),
+//     {
+//       name: "search-store",
+//       storage: createJSONStorage(() => localStorage),
+//       partialize: (state) => ({
+//         mkState: state.mkState,
+//         defaultEbaySite: state.defaultEbaySite,
+//         defaultAmazonSite: state.defaultAmazonSite,
+//       }),
+//     }
+//   )
+// );
+
+// const getLocalStorageItem = (key: string) => {
+//   if (typeof window !== "undefined") {
+//     const item = localStorage.getItem(key);
+//     return item ? JSON.parse(item) : null;
+//   }
+//   return null;
+// };

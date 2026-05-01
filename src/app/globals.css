@@ -1,0 +1,215 @@
+@import "tailwindcss";
+
+/* Source custom styles instead of importing */
+@source "./styles/skeleton/skeleton.css";
+@source "./styles/hover/buy-it-now-on-ebay.css";
+@source "./styles/hover/buy-it-now-on-amazon.css";
+@source "./styles/spinner-fallback.css";
+/* @variant dark (&:where([data-theme="dark"], [data-theme="dark"] *)); */
+@variant dark (.dark &);
+
+/* Tailwind CSS v4.0 Theme Configuration */
+@theme {
+  /* Custom Colors - these will be available as bg-*, text-*, border-*, etc. */
+  --color-graydient: rgba(24, 24, 31, 0.7);
+  --color-dark: #1e1f22;
+  --color-light-dark: #313338;
+  --color-light-gray: #404249;
+  --color-light: #caccd0;
+  --color-greenish: #36b987;
+  --color-graydient-blue: rgb(0, 75, 221);
+  --color-graydient-blue-dark: rgb(0, 50, 150);
+  --color-main-bg: rgb(35, 43, 43);
+  --color-dark-white: #faf9f6;
+  --color-main-white: #f2f2f2;
+
+  /* Custom animations */
+  --animate-shimmer: shimmer 2s infinite linear;
+  --animate-fade-in: fade-in 0.5s ease-out forwards;
+}
+
+/* Debug: Force the dark background to test */
+/* .dark .min-h-screen {
+  background-color: var(--color-light-dark) !important;
+} */
+
+/* Root CSS Variables */
+
+/* Dark mode variables - class-based dark mode */
+/* .dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 24, 24, 27;
+} */
+/*
+@layer base {
+  [data-theme="light"] {
+    --color-card: hsl(207 97% 12%);
+  }
+  [data-theme="dark"] {
+    --color-card: hsl(0 0% 96%);
+  }
+  [data-theme="custom"] {
+    --color-card: hsl(182, 87%, 39%);
+  }
+  [data-theme="pastel"] {
+    --color-card: hsl(291 46% 83%);
+  }
+} */
+
+/* :root[data-theme="light"] {
+  background-color: var(--color-background-light);
+  --color-card: hsl(207 97% 12%);
+}
+
+:root[data-theme="dark"] {
+  background-color: var(--color-background-dark);
+}
+
+:root[data-theme="custom"] {
+  background-color: var(--color-background-custom);
+}
+
+:root[data-theme="pastel"] {
+  background-color: var(--color-background-pastel);
+} */
+
+/* Global Body Styles */
+/* body {
+  font-family: "Switzer", "Switzer Placeholder", sans-serif;
+  font-size: 17px;
+  line-height: 21px;
+  background-color: rgb(var(--background-rgb));
+  color: rgb(var(--foreground-rgb));
+  transition: background-color 0.2s ease, color 0.2s ease;
+} */
+
+/* @theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+} */
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(241, 245, 249, 0.9);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background-color: rgba(39, 39, 42, 0.9);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.5);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(113, 113, 122, 0.5);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 116, 139, 0.7);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(82, 82, 91, 0.7);
+}
+
+/* Keyframe Animations */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom Utility Classes */
+@layer utilities {
+  .skeleton {
+    background: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 50%, #f2f2f2 75%);
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+    border-radius: 4px;
+  }
+
+  .dark .skeleton {
+    background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+    background-size: 200% 100%;
+    animation: var(--animate-shimmer);
+    border-radius: 4px;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@utility no-scrollbar {
+  @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+}
+@utility small-scrollbar {
+  @apply [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-lg [&::-webkit-scrollbar-thumb]:rounded-lg;
+}
+@utility very-small-scrollbar {
+  @apply [scrollbar-width:thin] [&::-webkit-scrollbar]:w-0.25 [&::-webkit-scrollbar-track]:rounded-lg [&::-webkit-scrollbar-thumb]:rounded-sm;
+}
+
+/* @layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+} */

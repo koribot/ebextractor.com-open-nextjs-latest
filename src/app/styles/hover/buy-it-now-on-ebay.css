@@ -1,0 +1,26 @@
+.hover-buy-now {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.hover-buy-now::after {
+    content: 'Buy Now on eBay';
+    position: absolute;
+    top: -2px; /* Adjust this value to position the text correctly at the top */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #0070ba; /* eBay blue color */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+}
+
+.hover-buy-now:hover::after {
+    opacity: 1;
+}

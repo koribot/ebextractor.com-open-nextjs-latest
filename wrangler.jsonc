@@ -1,0 +1,80 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ebextractor-open-next-js-latest",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-05-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "images": {
+    // Enable image optimization
+    // see https://opennext.js.org/cloudflare/howtos/image
+    "binding": "IMAGES",
+  },
+  "services": [
+    {
+      // Self-reference service binding, the service name must match the worker name
+      // see https://opennext.js.org/cloudflare/caching
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "ebextractor-open-next-js-latest",
+    },
+  ],
+  "upload_source_maps": true,
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets",
+    "run_worker_first": false,
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "invocation_logs": false,
+    },
+  },
+  "kv_namespaces": [
+    {
+      "binding": "EBEXTRACTOR_KV",
+      "id": "824fecb2be4d4977b411b0230a4a3e53",
+    },
+  ],
+  "d1_databases": [
+    {
+      "binding": "EBEXTRACTOR_ANALYTICS_DB",
+      "database_name": "ebextractor_analytics_db",
+      "database_id": "d712a42d-1ec1-4a4d-a45a-99f078fcc1b0",
+    },
+    {
+      "binding": "EBEXTRACTOR_MY_SAVED_DB",
+      "database_name": "ebextractor_my_saved_db",
+      "database_id": "e9ad274b-a3e5-4d00-9620-d1433defbbba",
+    },
+  ],
+  "define": {
+    "KUNSUL_IGNORE_IN_BUILD": "true",
+    "__BUILD_ENV__": "\"production\"",
+  },
+  /**
+   * Smart Placement
+   * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
+   */
+  // "placement": {  "mode": "smart" }
+  /**
+   * Bindings
+   * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
+   * databases, object storage, AI inference, real-time communication and more.
+   * https://developers.cloudflare.com/workers/runtime-apis/bindings/
+   */
+  /**
+   * Environment Variables
+   * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
+   * Note: Use secrets to store sensitive data.
+   * https://developers.cloudflare.com/workers/configuration/secrets/
+   */
+  // "vars": {  "MY_VARIABLE": "production_value" }
+}
