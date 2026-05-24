@@ -1,7 +1,7 @@
 
 import React from "react";
 import Image from "next/image";
-import logo from "../../../../../public/logo-icon-transparent.png";
+import logo from "@/app/contants/logo";
 
 interface SpinnerProps {
   size?: "sm" | "md" | "lg";

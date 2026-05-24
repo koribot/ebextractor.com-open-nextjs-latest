@@ -6,10 +6,10 @@ import {
 } from "../utils/LocalStorageManager";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import logo from "../../public/logo-icon-transparent.png";
 import requests from "../utils/http";
 import { AuthUserMeResponse } from "../model/User";
 import { api_paths } from "../contants/api-paths";
+import logo from "../contants/logo";
 
 const Loading = () => {
   return (
